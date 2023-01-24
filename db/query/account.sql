@@ -36,6 +36,6 @@ UPDATE accounts
 WHERE id = sqlc.arg(id)
 RETURNING *;
 
--- name: DeleteAuthor :exec
+-- name: DeleteAccount :exec
 DELETE FROM accounts
 WHERE id = $1;
