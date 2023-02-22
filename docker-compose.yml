@@ -6,15 +6,32 @@ services:
     build: 
       context: .
       dockerfile: Dockerfile.dev
-    env_file:
-      - app.env
     volumes:
       - .:/app
-    command: make server
+    env_file:
+      - app.env
+    ports:
+      - 8080:8080
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    
   db:
-    container_name: postgres-db
-    image: 
+    container_name: db
+    volumes:
+      - data:/var/lib/postgresql/data
+    image: postgres:14
 
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=1234
+      - POSTGRES_DB=simple_bank
+    healthcheck:
+      test: ["CMD", "pg_isready","-d","simple_bank"]
+      interval: 10s
+      timeout: 30s
+      retries: 5
+      start_period: 20s
 
+volumes:
+  data:
